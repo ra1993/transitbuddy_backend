@@ -51,11 +51,4 @@ def station_data(all_data):
 
 
 
-    
-        
-# with open("/home/richarda/apikeys/mtapikey","r") as file_object:
-#     api_key = file_object.readline()
-
-# print(api_key)
-
 

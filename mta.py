@@ -9,9 +9,9 @@ import json
 load_dotenv(find_dotenv())
 
 with open("/home/richarda/apikeys/mtapikey","r") as file_object:
-    api_key = file_object.readline()
+    api_key = file_object.readline().strip()
 
-api_key = ""
+#api_key = "aa4cb8e1ba8c2ff3af3f55af6e39e80f"
 
 
 def get_realtime_data(key): #GETS DATA FROM API AND PARSES  Just the BDFM lines

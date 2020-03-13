@@ -12,33 +12,50 @@ def schema(db = DBPATH):
         cur.execute("""DROP TABLE IF EXISTS account""")
         cur.execute(
         """
-                CREATE TABLE account (
+                CREATE TABLE user (
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                account_num VARCHAR UNIQUE,
                 username VARCHAR UNIQUE,
-                encrypted_password VARCHAR, 
+                encrypted_password VARCHAR,
+                email VARCHAR UNIQUE, 
                 f_name VARCHAR,
-                l_name VARCHAR,
-                email VARCHAR,
-                api_key VARCHAR
+                l_name VARCHAR
             );""")
 
         cur.execute("""DROP TABLE IF EXISTS user_transit""")
         cur.execute(
-        """     CREATE TABLE transit(
+        """     CREATE TABLE user_transit(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                station VARCHAR,
-                line_name VARCHAR, 
-                FOREIGN KEY (account_pk) REFERENCES account(pk),
-                FOREIGN KEY (line_name) REFERENCES line(pk)
+                line VARCHAR,
+                station VARCHAR, 
+                account_pk INTEGER,
+                line_pk VARCHAR,
+                FOREIGN KEY (account_pk) REFERENCES user(pk),
+                FOREIGN KEY (line_pk) REFERENCES line(pk)
             );""")
 
         cur.execute("""DROP TABLE IF EXISTS line""")
         cur.execute(
         """     CREATE TABLE line(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                line_name VARCHAR, 
-                FOREIGN KEY (account_pk) REFERENCES account(pk)
+                line_name VARCHAR
+            );""")
+
+        cur.execute("""DROP TABLE IF EXISTS station""")
+        cur.execute(
+        """     CREATE TABLE station(
+                pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                stop_id VARCHAR,
+                station_name VARCHAR
+                
+            );""")
+        
+        cur.execute("""DROP TABLE IF EXISTS line_has_station""")
+        cur.execute(
+        """     CREATE TABLE line_has_station(
+                station_pk INTEGER,
+                line_pk INTEGER,
+                FOREIGN KEY (station_pk) REFERENCES station(pk)
+                FOREIGN KEY (line_pk) REFERENCES line(pk)
             );""")
 
         cur.execute("""DROP TABLE IF EXISTS feed""")
@@ -46,22 +63,24 @@ def schema(db = DBPATH):
         """
                 CREATE TABLE feed(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_comment TEXT, 
-                line_name VARCHAR,
-                FOREIGN KEY (transit_pk) REFERENCES user_transit(pk)
-               
+                user_posts_pk INTEGER, 
+                line_pk VARCHAR,
+                FOREIGN KEY (line_pk) REFERENCES line(pk)
+                FOREIGN KEY (user_posts_pk) REFERENCES user_posts(pk)
             );""")
 
         cur.execute("""DROP TABLE IF EXISTS user_posts""")
         cur.execute(
         """
-                CREATE TABLE posts(
+                CREATE TABLE user_posts(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
                 comment VARCHAR,
                 time_stamp TIME,
-                account_pk INTEGER,
+
+                user_pk INTEGER,
+                feed_pk INTEGER,
                 FOREIGN KEY (feed_pk) REFERENCES feed(pk), 
-                FOREIGN KEY (account_pk) REFERENCES account(pk)
+                FOREIGN KEY (user_pk) REFERENCES user(pk)
             );""")
 
 if __name__ == "__main__":
