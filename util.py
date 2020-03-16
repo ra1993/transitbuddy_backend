@@ -1,6 +1,7 @@
 import requests
 import csv
 from csv import reader 
+import bcrypt
 
 url = "http://web.mta.info/developers/data/nyct/subway/Stations.csv"
 
@@ -50,5 +51,9 @@ def station_data(all_data):
             writer.writerows(station_id_data)
 
 
-
-
+#encrypts password
+def encrypt_password(password):
+    #salt = bcrypt.gensalt()
+    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    #hashed_pw = password.encode()
+    return hashed_pw

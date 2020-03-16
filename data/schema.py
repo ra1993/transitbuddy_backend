@@ -9,7 +9,7 @@ def schema(db = DBPATH):
     with sqlite3.connect(db) as conn:
         cur = conn.cursor()
 
-        cur.execute("""DROP TABLE IF EXISTS account""")
+        cur.execute("""DROP TABLE IF EXISTS user""")
         cur.execute(
         """
                 CREATE TABLE user (
@@ -27,9 +27,9 @@ def schema(db = DBPATH):
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
                 line VARCHAR,
                 station VARCHAR, 
-                account_pk INTEGER,
+                user_pk INTEGER,
                 line_pk VARCHAR,
-                FOREIGN KEY (account_pk) REFERENCES user(pk),
+                FOREIGN KEY (user_pk) REFERENCES user(pk),
                 FOREIGN KEY (line_pk) REFERENCES line(pk)
             );""")
 
@@ -49,14 +49,16 @@ def schema(db = DBPATH):
                 
             );""")
         
-        cur.execute("""DROP TABLE IF EXISTS line_has_station""")
+        cur.execute("""DROP TABLE IF EXISTS line_station""")
         cur.execute(
-        """     CREATE TABLE line_has_station(
-                station_pk INTEGER,
+        """     CREATE TABLE line_station(
                 line_pk INTEGER,
+                station_pk INTEGER,
                 FOREIGN KEY (station_pk) REFERENCES station(pk)
                 FOREIGN KEY (line_pk) REFERENCES line(pk)
-            );""")
+    
+            );"""
+            )
 
         cur.execute("""DROP TABLE IF EXISTS feed""")
         cur.execute(

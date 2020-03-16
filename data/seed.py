@@ -23,8 +23,6 @@ def open_dataset(file = "/home/richarda/Bootcamp/project_MTA/backend_app/station
         for i in train:
             train_list.append(i.split(" "))
 
-
-
         for i in range(len(stop_id[0])):
             station_dict[stop_id[0][i]] = station[0][i]
    
