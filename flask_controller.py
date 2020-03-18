@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
 import requests
-from backend_app.user import User
+from .backend_app.user import User
 from flask_cors import CORS
 
 dbpath = "./data/transit.db"
