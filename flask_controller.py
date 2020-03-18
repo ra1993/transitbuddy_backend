@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
-# from '/home/richarda/Bootcamp/project_MTA/backend_app/util.py' import encrypt_password
-
+import requests
 from backend_app.user import User
 from flask_cors import CORS
 
@@ -9,39 +8,58 @@ dbpath = "./data/transit.db"
 app = Flask(__name__)
 CORS(app)
 
+
+with open("/home/richarda/apikeys/mtapikey","r") as file_object:
+    api_key = file_object.readline().strip()
+
+with open("/home/richarda/apikeys/weatherkey","r") as file_object:
+    weather_key = file_object.readline().strip()
+
+
 #homepage
 @app.route('/')
 @app.route('/homepage', methods=["GET"])
 def homepage():
     pass
 
-
 @app.route('/register', methods = ["POST"])
 def register():
 
     error_message = "There was an error creating your account! Please try again."
-    data = request.get_json()
+    
 
+    # f_name = request.get_json()['f_name']
+    # l_name = request.get_json()['l_name']
+    # username = request.get_json()['username']
+    # password = request.get_json()['password']
+    # email = request.get_json()['email']
+
+    data = request.get_json()
     f_name = data['f_name']
     l_name = data['l_name']
     username = data['username']
     password = data['password']
     email = data['email']
 
-    encrypted_password = encrypt_password(password)
+    encrypted_password = password
 
-    new_user = User(pk = None, username = username, encrypted_password = encrypted_password, f_name = f_name, l_name = l_name, balance = balance)
+    new_user = User(username = username, encrypted_password = encrypted_password, f_name = f_name, l_name = l_name, email = email)
 
     try:
         new_user.save()
-        print("Thanks for joining Transit Buddy!", new_user.username)
+       
     except:
         time.sleep(5)
         return jsonify({"error": error_message})
     finally: 
-        #should return user to loggedin screen
-        return redirect("/homepage")
+      
+        return jsonify({"Welecome": new_user.username})
 
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 # @app.route('/login', methods=["POST"])
 # def login():
@@ -65,5 +83,11 @@ def register():
 #             return redirect("/loggedin_menu/", user_account = session)
 
 
-if __name__ == "__main__":
-    app.run(debug=True, port = 5000)
+
+
+
+# @app.route('/comment/<user_account>', methods=["GET"])
+# def comment():
+
+
+

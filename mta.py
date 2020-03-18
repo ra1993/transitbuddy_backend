@@ -11,8 +11,6 @@ load_dotenv(find_dotenv())
 with open("/home/richarda/apikeys/mtapikey","r") as file_object:
     api_key = file_object.readline().strip()
 
-#api_key = "aa4cb8e1ba8c2ff3af3f55af6e39e80f"
-
 
 def get_realtime_data(key): #GETS DATA FROM API AND PARSES  Just the BDFM lines
     feed = gtfs_realtime_pb2.FeedMessage()
@@ -21,16 +19,26 @@ def get_realtime_data(key): #GETS DATA FROM API AND PARSES  Just the BDFM lines
 
     return  feed #type(trip_data)
 
-print(get_realtime_data(api_key)) 
-#
-# def list_of_dict(key):            #converts  data to a list of dictionaries
-#     data_feed = get_data(key)
-#     subway_data = protobuf_to_dict(data_feed)
-#     subway_data = data_feed.json()
-#     train_data = subway_data['entity']
 
-#     return train_data
+def list_of_dict():            #converts  data to a list of dictionaries
+    data_feed = get_realtime_data(api_key)
+    subway_data = protobuf_to_dict(data_feed)
+    entity_data = subway_data['entity']
 
+    # return train_data, type(train_data), train_data[0]
+    return entity_data
 
 
+#returns time by searching train in route_id and station by stop_id
+def feed():
 
+    mta_feed = list_of_dict()
+    #convert station to station i_d
+
+    # for i in mta_feed:
+    #     print(i)
+
+    return mta_feed[0]
+
+
+print(feed())

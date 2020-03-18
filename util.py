@@ -5,7 +5,7 @@ import bcrypt
 
 url = "http://web.mta.info/developers/data/nyct/subway/Stations.csv"
 
-
+#scrapes mta static csv 
 def scrape_data(url):
 
     with requests.Session() as s:
