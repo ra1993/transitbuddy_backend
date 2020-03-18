@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
 import requests
-from .backend_app.user import User
+from user import User
 from flask_cors import CORS
 
 dbpath = "./data/transit.db"
@@ -61,26 +61,26 @@ def register():
 if __name__ == "__main__":
     app.run(debug=True)
 
-# @app.route('/login', methods=["POST"])
-# def login():
+@app.route('/login', methods=["POST"])
+def login():
 
-#     error_message = "Error: Invalid Credentials!"
-#     data = request.get_json()
+    error_message = "Error: Invalid Credentials!"
+    data = request.get_json()
     
-#     username = data['username']
-#     password = data['password']
+    username = data['username']
+    password = data['password']
        
-#         try:
-#             user_account = User.login(username, password)
-#             session['user_account'] = user_account.pk
-#             print(user_account,"LOGIN SUCCESSFULLL>>>>>>>>>>>")
-#         except:
-#             if user_account == False:
-#                 print("Invalid user credentials")
-#                 return redirect("/login") #return to login
-#         else:
+        try:
+            user_account = User.login(username, password)
+            session['user_account'] = user_account.pk
+            print(user_account,"LOGIN SUCCESSFULLL>>>>>>>>>>>")
+        except:
+            if user_account == False:
+                print("Invalid user credentials")
+                return redirect("/home") #return to login
+        else:
             
-#             return redirect("/loggedin_menu/", user_account = session)
+            return jsonify({}) user_account = session)
 
 
 
