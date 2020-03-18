@@ -17,10 +17,10 @@ with open("/home/richarda/apikeys/weatherkey","r") as file_object:
 
 
 #homepage
-@app.route('/')
-@app.route('/homepage', methods=["GET"])
-def homepage():
-    pass
+# @app.route('/')
+# @app.route('/homepage', methods=["GET"])
+# def homepage():
+#     pass
 
 @app.route('/register', methods = ["POST"])
 def register():
