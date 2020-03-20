@@ -33,7 +33,7 @@ def open_dataset(file = "stationlocations.csv", header = True):   #converts csv 
             return data
 
 all_data ,data, header = open_dataset()
-
+all_data = all_data
 
 def station_data(all_data):
 
@@ -44,11 +44,50 @@ def station_data(all_data):
     station = [[y[5] for y in all_data]]
     train =   [[z[7] for z in all_data]]
 
+    stop_id = stop_id[0][1:]
+    station = station[0][1:]
+
     station_id_data = stop_id + station + train
 
-    with open('stationdata.csv', 'w') as file:
-            writer = csv.writer(file)
-            writer.writerows(station_id_data)
+    #writes it to csv
+    # with open('stationdata.csv', 'w') as file:
+    #         writer = csv.writer(file)
+    #         writer.writerows(station_id_data)
+
+    train_list = []
+
+
+    for i in train:
+        for j in i:
+            train_list.append(j.split())
+    train_list = train_list[1:]
+
+    stopid_train = dict(zip(stop_id, train_list)) #dictionary of stop_id and corresponding trains for stops
+    stopid_station = dict(zip(stop_id, station))  #dictionary of stop_id and corresponding stations
+
+    return (stopid_train, stopid_station)
+    
+
+def train_stations(train):
+    stopid_train, stopid_station = station_data(all_data)
+
+    stop_ids = []
+    for key, values in stopid_train.items():
+        if train in values:
+            stop_ids.append(key)
+
+
+    for k in stopid_station:
+        if k in stop_ids:
+            return stopid.station.values()
+
+    # for i in range(0,len(stopid_station)):
+    #     for k, v in stopid_station.items():
+    #         if stop_ids in k:
+    #             print(v)
+                
+
+print(train_stations("F"))        
 
 
 #encrypts password

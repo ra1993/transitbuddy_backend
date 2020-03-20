@@ -20,41 +20,37 @@ def open_dataset(file = "/home/richarda/Bootcamp/project_MTA/backend_app/station
         station_dict  = {}
         train_list = []
         
-        for i in train:
-            train_list.append(i.split(" "))
 
         for i in range(len(stop_id[0])):
             station_dict[stop_id[0][i]] = station[0][i]
    
         return station_dict, train_list
 
-station_dict, train = open_dataset()
-print(train, type(train))
-# def seed(dbpath = DBPATH):
-#     with sqlite3.connect(dbpath) as connection:
-#         cur = connection.cursor()
+
+def seed(dbpath = DBPATH):
+    with sqlite3.connect(dbpath) as connection:
+        cur = connection.cursor()
    
-#         station_dict, train = open_dataset()
-#         del station_dict['GTFS Stop ID']
+        station_dict, train = open_dataset()
+        del station_dict['GTFS Stop ID']
 
-#         for k, v in station_dict.items():
-#             sql = ("""INSERT INTO station (stop_id, station_name) VALUES(?,?)""")
-#             values = (k, v)
+        for k, v in station_dict.items():
+            sql = ("""INSERT INTO station (stop_id, station_name) VALUES(?,?)""")
+            values = (k, v)
 
-#             cur.execute(sql, values)
+            cur.execute(sql, values)
+#------------------------------------------------------------
+        trains = ["1", "2", "3", "4", "5", "6", "7", "A", "B", "C", "D", "E", "F", "G", "J", "L", "M", "N", "Q", "R", "W", "Z"]
+
+        for t in trains:
+            sql = ("""INSERT INTO line (line_name) VALUES (?)""")
+            values = (t)
+
+            cur.execute(sql, values)
 
 
-        
-
-        
-
-        
-        
-
-
-
-# if __name__ == "__main__":
-#     seed()
+if __name__ == "__main__":
+    seed()
 
 
 

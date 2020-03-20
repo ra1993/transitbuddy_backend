@@ -56,38 +56,62 @@ def register():
         return jsonify({"Welecome": new_user.username})
 
 
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["GET"])
 def login():
 
     error_message = "Error: Invalid Credentials!"
+    successful = "Login Successful!"
     data = request.get_json()
     
     username = data['username']
     password = data['password']
        
-        try:
-            user_account = User.login(username, password)
-            session['user_account'] = user_account.pk
-            print(user_account,"LOGIN SUCCESSFULLL>>>>>>>>>>>")
-        except:
-            if user_account == False:
-                print("Invalid user credentials")
-                return redirect("/home") #return to login
-        else:
+    try:
+        user_account = User.login(username, password)
+        session['user_account'] = user_account.pk
+        print(user_account,"LOGIN SUCCESSFULLL>>>>>>>>>>>")
+    except:
+        if user_account == False:
+            return jsonify({"error": error_message}) #return to login
+    else:
             
-            return jsonify({}) user_account = session)
+        return jsonify({"message": successful})
+
+#------------------------------------------train,station and times
+@app.route('/train/<letter>', methods =["GET"])
+def get_train(letter):
+
+    train = letter
+   
+
+    return jsonify({"message": train})
+
+@app.route('/station', methods = ["GET"])
+def get_station():
+    data = request.get_json()
+
+    return jsonify({"message": "station"})
 
 
+@app.route('/incoming/time', methods = ["GET"])
+def time():
 
+    return jsonify({"incoming_time": "time"})
 
+#-----------------------------------------------for user feeds and comment components
+@app.route ('/comment', methods = ["POST"])
+def comment():
 
-# @app.route('/comment/<user_account>', methods=["GET"])
-# def comment():
+    return jsonify({"comment": "made a comment!"})
 
+@app.route('/feed', methods = ["GET"])
+def feed():
+    pass
 
+#----------------------------------------------get weather
+@app.route('/weather', methods = ["GET"])
+def weather_location():
+    pass
 
+if __name__ == "__main__":
+    app.run(debug=True)
