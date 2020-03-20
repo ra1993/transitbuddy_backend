@@ -72,22 +72,18 @@ def train_stations(train):
     stopid_train, stopid_station = station_data(all_data)
 
     stop_ids = []
+    station_names = []
     for key, values in stopid_train.items():
         if train in values:
             stop_ids.append(key)
 
+    for stop in stop_ids:
+        station_names.append(stopid_station[stop])
 
-    for k in stopid_station:
-        if k in stop_ids:
-            return stopid.station.values()
+    return station_names
 
-    # for i in range(0,len(stopid_station)):
-    #     for k, v in stopid_station.items():
-    #         if stop_ids in k:
-    #             print(v)
-                
 
-print(train_stations("F"))        
+print(train_stations("N"))        
 
 
 #encrypts password

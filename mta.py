@@ -52,8 +52,6 @@ def feed():
     mta_feed = list_of_dict()
     #convert station to station i_d
 
-    for k, v in mta_feed.items():
-        print(k, v)
 
 print(feed())
 
