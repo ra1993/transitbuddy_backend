@@ -68,7 +68,7 @@ def station_data(all_data):
     return (stopid_train, stopid_station)
     
 
-def train_stations(train):
+def get_stations(train):
     stopid_train, stopid_station = station_data(all_data)
 
     stop_ids = []
@@ -82,9 +82,7 @@ def train_stations(train):
 
     return station_names
 
-
-print(train_stations("N"))        
-
+    
 
 #encrypts password
 def encrypt_password(password):

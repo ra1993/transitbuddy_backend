@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
 import requests
 from user import User
+from comment import Comment
 from flask_cors import CORS
+from util import get_stations
+from util import encrypt_password
 
 dbpath = "./data/transit.db"
 
@@ -41,7 +44,7 @@ def register():
     password = data['password']
     email = data['email']
 
-    encrypted_password = password
+    encrypted_password = encrypt_password(password)
 
     new_user = User(username = username, encrypted_password = encrypted_password, f_name = f_name, l_name = l_name, email = email)
 
@@ -56,7 +59,7 @@ def register():
         return jsonify({"Welecome": new_user.username})
 
 
-@app.route('/login', methods=["GET"])
+@app.route('/login', methods=["POST"])
 def login():
 
     error_message = "Error: Invalid Credentials!"
@@ -78,20 +81,17 @@ def login():
         return jsonify({"message": successful})
 
 #------------------------------------------train,station and times
-@app.route('/train/<letter>', methods =["GET"])
-def get_train(letter):
+@app.route('/train/<letter>', methods =["POST", "GET"])
+def get_train_stations(letter):
 
-    train = letter
-   
+    if request.method == "POST":
+        stations = get_stations(letter)
+    print(stations)
 
-    return jsonify({"message": train})
-
-@app.route('/station', methods = ["GET"])
-def get_station():
-    data = request.get_json()
-
-    return jsonify({"message": "station"})
-
+    if request.method == "GET":
+        return ({"stations": stations})
+    return ({"stations": stations})
+    
 
 @app.route('/incoming/time', methods = ["GET"])
 def time():
@@ -101,6 +101,9 @@ def time():
 #-----------------------------------------------for user feeds and comment components
 @app.route ('/comment', methods = ["POST"])
 def comment():
+
+    data = request.get_json()
+    new_comment = Comment()
 
     return jsonify({"comment": "made a comment!"})
 
