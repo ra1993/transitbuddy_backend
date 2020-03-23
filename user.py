@@ -45,7 +45,7 @@ class User:
             values = (self.username, self.encrypted_password, self.f_name, self.l_name, self.email, self.pk)
             cur.execute(sql, values)
   
-
+    @classmethod
     def login(cls, username, password):
 
         # return cls.select_one_where("WHERE username=? AND password=?", username, crypted_password)

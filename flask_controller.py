@@ -5,6 +5,7 @@ from comment import Comment
 from flask_cors import CORS
 from util import get_stations
 from util import encrypt_password
+from util import get_stop_id
 
 dbpath = "./data/transit.db"
 
@@ -30,7 +31,6 @@ def register():
 
     error_message = "There was an error creating your account! Please try again."
     
-
     # f_name = request.get_json()['f_name']
     # l_name = request.get_json()['l_name']
     # username = request.get_json()['username']
@@ -56,7 +56,7 @@ def register():
         return jsonify({"error": error_message})
     finally: 
       
-        return jsonify({"Welecome": new_user.username})
+        return jsonify({"Thank You:": new_user.username})
 
 
 @app.route('/login', methods=["POST"])
@@ -68,17 +68,15 @@ def login():
     
     username = data['username']
     password = data['password']
-       
+    
     try:
         user_account = User.login(username, password)
-        session['user_account'] = user_account.pk
-        print(user_account,"LOGIN SUCCESSFULLL>>>>>>>>>>>")
     except:
         if user_account == False:
             return jsonify({"error": error_message}) #return to login
     else:
-            
-        return jsonify({"message": successful})
+        
+        return jsonify({"Welcome": user_account.username})
 
 #------------------------------------------train,station and times
 @app.route('/train/<letter>', methods =["POST", "GET"])
@@ -86,7 +84,7 @@ def get_train_stations(letter):
 
     if request.method == "POST":
         stations = get_stations(letter)
-    print(stations)
+    # print(stations)
 
     if request.method == "GET":
         return ({"stations": stations})

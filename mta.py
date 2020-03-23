@@ -22,8 +22,9 @@ def get_realtime_data(key): #GETS DATA FROM API AND PARSES  Just the BDFM lines
     response = requests.get(f'http://datamine.mta.info/mta_esi.php?key={key}&feed_id=21')
     feed.ParseFromString(response.content)
 
-
     return  feed #type(trip_data)
+
+print(get_realtime_data(api_key))
 
 def list_of_dict():            #converts  data to a list of dictionaries
     data_feed = get_realtime_data(api_key)
@@ -52,9 +53,8 @@ def feed():
     mta_feed = list_of_dict()
     #convert station to station i_d
 
-    ret
+    return mta_feed
 
 
-print(feed())
 
 

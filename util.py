@@ -82,11 +82,19 @@ def get_stations(train):
 
     return station_names
 
-    
+def get_stop_id(train, station):
+    stopid_train, stopid_station = station_data(all_data)
+
+    routes_from_station = [
+    route 
+    for route in stopid_station 
+    if stopid_station[route] == station
+    ]
+    stop_id = list(filter(lambda a: a in stopid_train, routes_from_station))
+    return stop_id[0]
+
 
 #encrypts password
 def encrypt_password(password):
-    #salt = bcrypt.gensalt()
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    #hashed_pw = password.encode()
     return hashed_pw
