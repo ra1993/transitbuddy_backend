@@ -18,7 +18,8 @@ def schema(db = DBPATH):
                 encrypted_password VARCHAR,
                 email VARCHAR UNIQUE, 
                 f_name VARCHAR,
-                l_name VARCHAR
+                l_name VARCHAR,
+                token VARCHAR
             );""")
 
         cur.execute("""DROP TABLE IF EXISTS user_transit""")

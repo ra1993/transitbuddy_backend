@@ -1,4 +1,4 @@
-from flask import Flask, generate_token, render_template, request, redirect, session, jsonify, flash, url_for
+from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
 import requests
 import datetime
 #modules
@@ -10,6 +10,8 @@ from flask_cors import CORS
 from util import get_stations
 from util import encrypt_password
 from util import get_stop_id
+from mta import get_train_time
+
 
 dbpath = "./data/transit.db"
 table3 = "comment"
@@ -36,22 +38,17 @@ def register():
 
     error_message = "There was an error creating your account! Please try again."
     
-    # f_name = request.get_json()['f_name']
-    # l_name = request.get_json()['l_name']
-    # username = request.get_json()['username']
-    # password = request.get_json()['password']
-    # email = request.get_json()['email']
-
     data = request.get_json()
     f_name = data['f_name']
     l_name = data['l_name']
     username = data['username']
     password = data['password']
     email = data['email']
+    
 
     encrypted_password = encrypt_password(password)
 
-    new_user = User(username = username, encrypted_password = encrypted_password, f_name = f_name, l_name = l_name, email = email)
+    new_user = User(username = username, encrypted_password = encrypted_password, f_name = f_name, l_name = l_name, email = email, token = "")
 
     try:
         new_user.save()
@@ -73,21 +70,37 @@ def login():
     
     username = data['username']
     password = data['password']
-    
-    try:
-        user_account = User.login(username, password)
-        # user_account.create_token()
-    except:
-        if user_account == False:
-            return jsonify({"error": error_message}) #return to login
+
+
+    user_account = User.login(username, password)
+    if user_account == False:
+        return jsonify({"error": error_message}) #return to login
     else:
-        
-        return jsonify({"Welcome": user_account.username})
+        user_account.get_token()
+        return jsonify({"token": user_account.token})
+
+@app.route('/token/<token>', methods = ["GET"])
+def token_auth(token):
+    user_account = User.select_one(f"""WHERE token =?""", (token,))
+    user_account = {
+        "pk" : user_account.pk,
+        "username" : user_account.username,
+        "f_name" : user_account.f_name,
+        "l_name" : user_account.l_name,
+        "token" : user_account.token
+    }
+    return jsonify({"userData": user_account})
+
+@app.route('/logout', methods = ["POST"])
+def logout():
+    data = request.get_json()
+    user_account = User.select_one(f"""WHERE pk = ?""", (data["pk"],))
+    user_account.del_token()
+    return jsonify({"response": "Logged out successfully!"})
 
 #------------------------------------------train,station and times
 @app.route('/train/<letter>', methods =["POST", "GET"])
 def get_train_stations(letter):
-
     if request.method == "POST":
         stations = get_stations(letter)
     # print(stations)
@@ -99,7 +112,7 @@ def get_train_stations(letter):
 
 @app.route('/incoming/time', methods = ["GET"])
 def get_time():
-
+    
     return jsonify({"incoming_time": "time"})
 
 #-----------------------------------------------for user feeds and comment components
@@ -116,12 +129,10 @@ def comment():
 @app.route('/view/comments')
 def view_comments():
    #sql statement select all to pull all comments from table db based on user
-
-
+   pass
 
 @app.route('/feed', methods = ["GET"])
 def feed():
-    
     pass
 
 #----------------------------------------------get weather

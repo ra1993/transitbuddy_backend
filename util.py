@@ -2,6 +2,8 @@ import requests
 import csv
 from csv import reader 
 import bcrypt
+import string
+import random
 
 url = "http://web.mta.info/developers/data/nyct/subway/Stations.csv"
 
@@ -98,3 +100,5 @@ def get_stop_id(train, station):
 def encrypt_password(password):
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed_pw
+
+    

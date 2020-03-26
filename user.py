@@ -1,6 +1,7 @@
 import sqlite3
 import bcrypt
 import string
+import random
 
 from flask import Flask, jsonify, request, render_template
 
@@ -17,6 +18,7 @@ class User:
         self.f_name = kwargs.get("f_name")
         self.l_name = kwargs.get("l_name")
         self.email = kwargs.get('email')
+        self.token = kwargs.get('token')
 
     def save(self):     #saves file
         if self.pk is None:
@@ -28,21 +30,21 @@ class User:
         with sqlite3.connect(self.dbpath) as conn:
             cur = conn.cursor()
             sql = """
-            INSERT INTO {} (username, encrypted_password, f_name, l_name,  email)
-            VALUES(?,?,?,?,?);
+            INSERT INTO {} (username, encrypted_password, f_name, l_name,  email, token)
+            VALUES(?,?,?,?,?,?);
             """.format(self.tablename)
 
-            values = (self.username, self.encrypted_password, self.f_name, self.l_name, self.email)
+            values = (self.username, self.encrypted_password, self.f_name, self.l_name, self.email, self.token)
             cur.execute(sql, values)
 
     def _update(self):
         with sqlite3.connect(self.dbpath) as conn:
             cur = conn.cursor()
             sql = """UPDATE {} SET
-                     username = ?, f_name = ?, l_name = ?, crypted_password = ?, email = ?
+                     username = ?, encrypted_password = ?, f_name = ?, l_name = ?, email = ?, token = ?
                      WHERE pk = ?;
             """.format(self.tablename)
-            values = (self.username, self.encrypted_password, self.f_name, self.l_name, self.email, self.pk)
+            values = (self.username, self.encrypted_password, self.f_name, self.l_name, self.email, self.token, self.pk)
             cur.execute(sql, values)
   
     @classmethod
@@ -54,24 +56,53 @@ class User:
             cur = conn.cursor()
             sql= f"""SELECT * FROM {cls.tablename} WHERE username == ?
             """
+
+            print(username, password, "---------------------")
             cur.execute(sql, (username,)) 
             row = cur.fetchone()
             if row is None:
                 return False
             
             user_account = cls(**row)
- 
+            print("password encode:",password.encode('utf-8'),">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            print("encrytped_password:", user_account.encrypted_password, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
             if not bcrypt.checkpw(password.encode('utf-8'),user_account.encrypted_password): #checking password against crypt password
-            #if user_account.crypted_password != password:
                 return False
             else:
                 return user_account
 
-    
-    
+    def get_token(self):
+        key = string.digits + string.ascii_letters
+        random_key = [''.join(random.choice(key) for i in range(20))]
+
+        token = str(random_key)
+
+        if self.token is None: #if api key doesnt exist, then update 
+            self.token = token
+
+        self.save()
+        return self.token
 
 
+    def del_token(self):
+        with sqlite3.connect(self.dbpath) as conn:
+            cur = conn.cursor()
+            sql = f"""UPDATE {self.tablename} SET token="" 
+                WHERE pk={self.pk}"""
+            cur.execute(sql)
 
+
+    @classmethod
+    def select_one(cls, pk):
+        #selects one entry from the database
+        with sqlite3.connect(cls.dbpath) as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+
+            sql = f"""SELECT * FROM {cls.tablename} WHERE pk =?;"""
+            cur.execute(sql, (pk,))
+            row = cur.fetchone()
+            return cls(**row)
 
 if __name__ == "__main__":
     app.run(debug=True)
