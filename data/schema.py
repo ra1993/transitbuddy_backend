@@ -65,19 +65,19 @@ def schema(db = DBPATH):
         """
                 CREATE TABLE feed(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_posts_pk INTEGER, 
+                comment_pk INTEGER, 
                 line_pk VARCHAR,
                 FOREIGN KEY (line_pk) REFERENCES line(pk)
-                FOREIGN KEY (user_posts_pk) REFERENCES user_posts(pk)
+                FOREIGN KEY (comment_pk) REFERENCES comment(pk)
             );""")
 
-        cur.execute("""DROP TABLE IF EXISTS user_posts""")
+        cur.execute("""DROP TABLE IF EXISTS comment""")
         cur.execute(
         """
-                CREATE TABLE user_posts(
+                CREATE TABLE comment(
                 pk INTEGER PRIMARY KEY AUTOINCREMENT,
                 comment VARCHAR,
-                time_stamp TIME,
+                time TIME,
 
                 user_pk INTEGER,
                 feed_pk INTEGER,

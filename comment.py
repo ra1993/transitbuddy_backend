@@ -6,11 +6,12 @@ from flask import Flask, jsonify, request
 
 class Comment:
 
-    tablename = "user_posts"
+    tablename = "comment"
     dbpath = "./data/transit.db"
 
     def __init__(self, **kwargs):
         self.pk = kwargs.get('pk')
+        self.comment = kwargs.get('comment')
         self.time = kwargs.get("time")
 
     def save(self):     #saves file
@@ -23,21 +24,21 @@ class Comment:
         with sqlite3.connect(self.dbpath) as conn:
             cur = conn.cursor()
             sql = """
-            INSERT INTO {} (username, time)
-            VALUES(?,?,?,?,?);
+            INSERT INTO {} (comment, time)
+            VALUES(?,?);
             """.format(self.tablename)
 
-            values = (self.username, self.time)
+            values = (self.comment, self.time)
             cur.execute(sql, values)
 
     def _update(self):
         with sqlite3.connect(self.dbpath) as conn:
             cur = conn.cursor()
             sql = """UPDATE {} SET
-                     username = ?,  time = ?
+                     comment = ?,  time = ?
                      WHERE pk = ?;
             """.format(self.tablename)
-            values = (self.username, self.time, self.pk)
+            values = (self.comment, self.time, self.pk)
             cur.execute(sql, values)
   
 

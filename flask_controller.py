@@ -1,13 +1,18 @@
-from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
+from flask import Flask, generate_token, render_template, request, redirect, session, jsonify, flash, url_for
 import requests
+import datetime
+#modules
 from user import User
 from comment import Comment
 from flask_cors import CORS
+
+#functions
 from util import get_stations
 from util import encrypt_password
 from util import get_stop_id
 
 dbpath = "./data/transit.db"
+table3 = "comment"
 
 app = Flask(__name__)
 CORS(app)
@@ -71,6 +76,7 @@ def login():
     
     try:
         user_account = User.login(username, password)
+        # user_account.create_token()
     except:
         if user_account == False:
             return jsonify({"error": error_message}) #return to login
@@ -92,21 +98,30 @@ def get_train_stations(letter):
     
 
 @app.route('/incoming/time', methods = ["GET"])
-def time():
+def get_time():
 
     return jsonify({"incoming_time": "time"})
 
 #-----------------------------------------------for user feeds and comment components
 @app.route ('/comment', methods = ["POST"])
 def comment():
-
     data = request.get_json()
-    new_comment = Comment()
+    time = strftime(datetime.datetime.now())
+    comment = data['comment']
+    new_comment = Comment(comment = comment, time = time)
 
     return jsonify({"comment": "made a comment!"})
 
+
+@app.route('/view/comments')
+def view_comments():
+   #sql statement select all to pull all comments from table db based on user
+
+
+
 @app.route('/feed', methods = ["GET"])
 def feed():
+    
     pass
 
 #----------------------------------------------get weather
