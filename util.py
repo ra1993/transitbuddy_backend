@@ -101,4 +101,10 @@ def encrypt_password(password):
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed_pw
 
-    
+def generate_token():
+        key = string.digits + string.ascii_letters
+        random_key = [''.join(random.choice(key) for i in range(20))]
+
+        token = str(random_key)
+
+        return token

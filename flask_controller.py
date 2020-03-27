@@ -71,17 +71,18 @@ def login():
     username = data['username']
     password = data['password']
 
-
     user_account = User.login(username, password)
+    user_account.get_token() #creates token when user logs in
+   
     if user_account == False:
         return jsonify({"error": error_message}) #return to login
     else:
-        user_account.get_token()
+ 
         return jsonify({"token": user_account.token})
 
 @app.route('/token/<token>', methods = ["GET"])
 def token_auth(token):
-    user_account = User.select_one(f"""WHERE token =?""", (token,))
+    user_account = User.select_token(f"""WHERE token =?""", (token,))
     user_account = {
         "pk" : user_account.pk,
         "username" : user_account.username,
@@ -116,8 +117,8 @@ def get_time():
     return jsonify({"incoming_time": "time"})
 
 #-----------------------------------------------for user feeds and comment components
-@app.route ('/comment', methods = ["POST"])
-def comment():
+@app.route ('/add/comment', methods = ["POST"])
+def add_comment():
     data = request.get_json()
     time = strftime(datetime.datetime.now())
     comment = data['comment']

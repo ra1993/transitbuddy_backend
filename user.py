@@ -3,6 +3,8 @@ import bcrypt
 import string
 import random
 
+from util import generate_token
+
 from flask import Flask, jsonify, request, render_template
 
 
@@ -57,31 +59,41 @@ class User:
             sql= f"""SELECT * FROM {cls.tablename} WHERE username == ?
             """
 
-            print(username, password, "---------------------")
             cur.execute(sql, (username,)) 
             row = cur.fetchone()
             if row is None:
                 return False
             
             user_account = cls(**row)
-            print("password encode:",password.encode('utf-8'),">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-            print("encrytped_password:", user_account.encrypted_password, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+
             if not bcrypt.checkpw(password.encode('utf-8'),user_account.encrypted_password): #checking password against crypt password
                 return False
             else:
                 return user_account
 
     def get_token(self):
-        key = string.digits + string.ascii_letters
-        random_key = [''.join(random.choice(key) for i in range(20))]
+        
+        repeat = True
+        self.token = generate_token()
 
-        token = str(random_key)
+        with sqlite3.connect(self.dbpath) as conn:
+            cur = conn.cursor()
 
-        if self.token is None: #if api key doesnt exist, then update 
-            self.token = token
+           
+            while repeat is True:
+                sql = f"""SELECT pk FROM {self.tablename} WHERE token == ?"""
+                cur.execute(sql, (self.token,))
+                instance = cur.fetchone()
 
-        self.save()
-        return self.token
+                if instance is None:
+                    repeat = False
+                else:
+                    self.token = generate_token()
+            
+            sql = f"""UPDATE {self.tablename} SET token = "{self.token}"
+                WHERE pk = {self.pk}"""
+            cur.execute(sql)
+
 
 
     def del_token(self):
@@ -101,6 +113,18 @@ class User:
 
             sql = f"""SELECT * FROM {cls.tablename} WHERE pk =?;"""
             cur.execute(sql, (pk,))
+            row = cur.fetchone()
+            return cls(**row)
+
+    @classmethod
+    def select_token(cls, where_clause = "", values = tuple()):
+        #selects one entry from the database
+        with sqlite3.connect(cls.dbpath) as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+
+            sql = f"""SELECT * FROM {cls.tablename} {where_clause};"""
+            cur.execute(sql, values)
             row = cur.fetchone()
             return cls(**row)
 
