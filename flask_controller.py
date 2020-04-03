@@ -1,15 +1,17 @@
 from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
 import requests
-import datetime
+from datetime import datetime
 #modules
 from user import User
 from comment import Comment
 from flask_cors import CORS
+from line import Line
 
 #functions
 from util import get_stations
 from util import encrypt_password
 from util import get_stop_id
+from util import get_weather_key
 from mta import get_train_time
 
 
@@ -23,8 +25,14 @@ CORS(app)
 with open("/home/richarda/apikeys/mtapikey","r") as file_object:
     api_key = file_object.readline().strip()
 
-with open("/home/richarda/apikeys/weatherkey","r") as file_object:
-    weather_key = file_object.readline().strip()
+
+# def get_weatherkey():
+#     with open("/home/richarda/apikeys/weatherkey","r") as file_object:
+#         weather_key = file_object.readline().strip()
+
+#     return weather_key
+
+
 
 
 #homepage
@@ -45,7 +53,6 @@ def register():
     password = data['password']
     email = data['email']
     
-
     encrypted_password = encrypt_password(password)
 
     new_user = User(username = username, encrypted_password = encrypted_password, f_name = f_name, l_name = l_name, email = email, token = "")
@@ -73,16 +80,16 @@ def login():
 
     user_account = User.login(username, password)
     user_account.get_token() #creates token when user logs in
-   
+  
     if user_account == False:
-        return jsonify({"error": error_message}) #return to login
+        return jsonify({"error": error_message}) #return to login'
     else:
- 
         return jsonify({"token": user_account.token})
 
 @app.route('/token/<token>', methods = ["GET"])
 def token_auth(token):
     user_account = User.select_token(f"""WHERE token =?""", (token,))
+   
     user_account = {
         "pk" : user_account.pk,
         "username" : user_account.username,
@@ -90,6 +97,7 @@ def token_auth(token):
         "l_name" : user_account.l_name,
         "token" : user_account.token
     }
+   
     return jsonify({"userData": user_account})
 
 @app.route('/logout', methods = ["POST"])
@@ -111,35 +119,48 @@ def get_train_stations(letter):
     return ({"stations": stations})
     
 
-@app.route('/incoming/time', methods = ["GET"])
-def get_time():
-    
-    return jsonify({"incoming_time": "time"})
+@app.route('/incoming/time/<train>/<station>', methods = ["GET"])
+def get_time(train, station):
+
+    stop_id = get_stop_id(station)
+    get_time = get_train_time(train, stop_id)
+    return jsonify({"incoming_time": get_time})
 
 #-----------------------------------------------for user feeds and comment components
 @app.route ('/add/comment', methods = ["POST"])
 def add_comment():
+
+    error_message = "There was an error saving your comment!"
+    
     data = request.get_json()
-    time = strftime(datetime.datetime.now())
+   
+    time = datetime.now()
+    line = data['line']['train']
+    token = data['token']
     comment = data['comment']
-    new_comment = Comment(comment = comment, time = time)
+    line_record = Line.select_one(line)
+    user = User.select_token(token)
+
+    new_comment = Comment(comment = comment, time = time, line_pk = line_record["pk"], user_pk = user.pk)
+
+    new_comment.save()
 
     return jsonify({"comment": "made a comment!"})
+  
 
-
-@app.route('/view/comments')
+@app.route('/view/comments', methods = ["GET"])
 def view_comments():
-   #sql statement select all to pull all comments from table db based on user
-   pass
+    
+    return jsonify(Comment.select_all())
 
-@app.route('/feed', methods = ["GET"])
-def feed():
-    pass
+@app.route('/weatherkey')
+def get_weather_key():
+    weather_key = get_weather_key()
+    time.sleep(5)
+    
+    print(weather_key)
+    return jsonify({"weather_key": weather_key})
 
-#----------------------------------------------get weather
-@app.route('/weather', methods = ["GET"])
-def weather_location():
-    pass
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port = 5000)

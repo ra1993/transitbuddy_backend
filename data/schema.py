@@ -49,28 +49,7 @@ def schema(db = DBPATH):
                 station_name VARCHAR
                 
             );""")
-        
-        cur.execute("""DROP TABLE IF EXISTS line_station""")
-        cur.execute(
-        """     CREATE TABLE line_station(
-                line_pk INTEGER,
-                station_pk INTEGER,
-                FOREIGN KEY (station_pk) REFERENCES station(pk)
-                FOREIGN KEY (line_pk) REFERENCES line(pk)
-    
-            );"""
-            )
 
-        cur.execute("""DROP TABLE IF EXISTS feed""")
-        cur.execute(
-        """
-                CREATE TABLE feed(
-                pk INTEGER PRIMARY KEY AUTOINCREMENT,
-                comment_pk INTEGER, 
-                line_pk VARCHAR,
-                FOREIGN KEY (line_pk) REFERENCES line(pk)
-                FOREIGN KEY (comment_pk) REFERENCES comment(pk)
-            );""")
 
         cur.execute("""DROP TABLE IF EXISTS comment""")
         cur.execute(
@@ -81,8 +60,8 @@ def schema(db = DBPATH):
                 time TIME,
 
                 user_pk INTEGER,
-                feed_pk INTEGER,
-                FOREIGN KEY (feed_pk) REFERENCES feed(pk), 
+                line_pk INTEGER,
+                FOREIGN KEY (line_pk) REFERENCES line(pk), 
                 FOREIGN KEY (user_pk) REFERENCES user(pk)
             );""")
 

@@ -122,7 +122,7 @@ class User:
         with sqlite3.connect(cls.dbpath) as conn:
             conn.row_factory = sqlite3.Row
             cur = conn.cursor()
-
+            print(values, "VALUES----------------------")
             sql = f"""SELECT * FROM {cls.tablename} {where_clause};"""
             cur.execute(sql, values)
             row = cur.fetchone()

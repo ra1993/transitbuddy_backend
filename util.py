@@ -84,7 +84,7 @@ def get_stations(train):
 
     return station_names
 
-def get_stop_id(train, station):
+def get_stop_id(station):
     stopid_train, stopid_station = station_data(all_data)
 
     routes_from_station = [
@@ -108,3 +108,13 @@ def generate_token():
         token = str(random_key)
 
         return token
+
+
+def get_weather_key():
+    with open("/home/richarda/apikeys/weatherkey", 'r') as f_obj:
+        weatherkey = f_obj.readline().strip()
+        print(weatherkey)
+    return weatherkey
+
+if __name__ == "__main__":
+    app.run(debug=True)

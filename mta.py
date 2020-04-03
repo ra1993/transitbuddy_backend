@@ -81,7 +81,6 @@ def get_train_time(train, stop_code):
         int(earliestTime)).strftime('%I:%M:%S %p')
         return real_time
 
-print(get_train_time("F", "D16"))
 
 
 
