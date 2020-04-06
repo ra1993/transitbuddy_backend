@@ -26,11 +26,11 @@ with open("/home/richarda/apikeys/mtapikey","r") as file_object:
     api_key = file_object.readline().strip()
 
 
-# def get_weatherkey():
-#     with open("/home/richarda/apikeys/weatherkey","r") as file_object:
-#         weather_key = file_object.readline().strip()
+def get_weatherkey():
+    with open("/home/richarda/apikeys/weatherkey","r") as file_object:
+        weather_key = file_object.readline().strip()
 
-#     return weather_key
+    return weather_key
 
 
 
@@ -133,6 +133,7 @@ def add_comment():
     error_message = "There was an error saving your comment!"
     
     data = request.get_json()
+    print(data)
    
     time = datetime.now()
     line = data['line']['train']
@@ -148,15 +149,14 @@ def add_comment():
     return jsonify({"comment": "made a comment!"})
   
 
-@app.route('/view/comments', methods = ["GET"])
-def view_comments():
-    
-    return jsonify(Comment.select_all())
+@app.route('/view/comments/<train>', methods = ["GET"])
+def view_comments(train):
+    return jsonify(Comment.select_all_by_train(train))
 
 @app.route('/weatherkey')
 def get_weather_key():
-    weather_key = get_weather_key()
-    time.sleep(5)
+    weather_key = get_weatherkey()
+
     
     print(weather_key)
     return jsonify({"weather_key": weather_key})

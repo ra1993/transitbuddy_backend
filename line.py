@@ -45,7 +45,7 @@ class Line:
     def select_one(cls, line_name):
         with sqlite3.connect(cls.dbpath) as conn:
             cur = conn.cursor()
-            print('select_one', line_name)
+            #print('select_one', line_name)
             sql = f"""SELECT * FROM {cls.tablename} WHERE line_name = ?;"""
             cur.execute(sql, (line_name))
             line = cur.fetchone()

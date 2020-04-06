@@ -49,9 +49,9 @@ def list_of_dict():            #converts  data to a list of dictionaries
 #                 if trip["trip_update"]["trip"]["route_id"] == train: #Checks train
 #                     if "stop_time_update" in trip["trip_update"]: #Check trip has stops in it
 #                         for stop in trip["trip_update"]["stop_time_update"]: #Loop through the stops on this trips
-#                             if stop["stop_id"] ==  (stop_code+"N") or stop["stop_id"] == (stop_code+"S"): #Find check which the stop is. F05N and F05S are both station F05 im pretty sure
+#                             if stop["stop_id"] ==  (stop_code+"N") or stop["stop_id"] == (stop_code+"S"): #Find check which the stop is. F05N and F05S are both station F05
 #                             #if stop["stop_id"] == "B23N" or stop["stop_id"] == "B23S": #F05N and F05S are both same stations from diff bounds.
-#                                 #if stop["arrival"]["time"] > if i want to compare arrival time to current time
+#                                 #if stop["arrival"]["time"] > currentTime: if i want to compare arrival time to current time
 #                                 earliestTime = earliestTime if earliestTime < stop["arrival"]["time"] else stop["arrival"]["time"] #Use ternary opperator to find smallest value
 
 #         arrival_time = datetime.datetime.fromtimestamp(

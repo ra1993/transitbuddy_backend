@@ -123,10 +123,12 @@ class User:
             conn.row_factory = sqlite3.Row
             cur = conn.cursor()
             print(values, "VALUES----------------------")
-            sql = f"""SELECT * FROM {cls.tablename} {where_clause};"""
+            sql = f"""SELECT * FROM {cls.tablename} WHERE token={where_clause};"""
+            print(sql)
             cur.execute(sql, values)
             row = cur.fetchone()
             return cls(**row)
 
 if __name__ == "__main__":
     app.run(debug=True)
+    

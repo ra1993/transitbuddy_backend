@@ -3,6 +3,7 @@ import string
 
 from flask import Flask, jsonify, request
 from user import User
+from line import Line
 
 class Comment:
 
@@ -58,10 +59,33 @@ class Comment:
             comment = cls(**comment)
             return comment
 
+    @classmethod
+    def select_all_by_train(cls, train):
+        line = Line.select_one(train)
+        with sqlite3.connect(cls.dbpath) as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+
+            sql = f"""SELECT * FROM {cls.tablename} WHERE line_pk={line["pk"]}"""
+            cur.execute(sql)
+            rows = cur.fetchall()
+            results = []
+            
+            for r in rows:
+                user_comments = User.select_one(r["user_pk"])
+                comment = {
+                    "pk": r["pk"],
+                    "comment": r["comment"],
+                    "time": r["time"],
+                    "line_pk": r["line_pk"],
+                    "user_pk": r["user_pk"],
+                    "username": user_comments.username
+                }
+                results.append(comment)
+            return results
 
     @classmethod
     def select_all(cls, where_clause = "", values = tuple()):
-     
         with sqlite3.connect(cls.dbpath) as conn:
             conn.row_factory = sqlite3.Row
             cur = conn.cursor()
