@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
 import requests
 from datetime import datetime
+import time
 #modules
 from user import User
 from comment import Comment
@@ -15,6 +16,7 @@ from util import get_weather_key
 from mta import get_train_time
 
 
+
 dbpath = "./data/transit.db"
 table3 = "comment"
 
@@ -26,20 +28,6 @@ with open("/home/richarda/apikeys/mtapikey","r") as file_object:
     api_key = file_object.readline().strip()
 
 
-def get_weatherkey():
-    with open("/home/richarda/apikeys/weatherkey","r") as file_object:
-        weather_key = file_object.readline().strip()
-
-    return weather_key
-
-
-
-
-#homepage
-# @app.route('/')
-# @app.route('/homepage', methods=["GET"])
-# def homepage():
-#     pass
 
 @app.route('/register', methods = ["POST"])
 def register():
@@ -123,8 +111,10 @@ def get_train_stations(letter):
 def get_time(train, station):
 
     stop_id = get_stop_id(station)
-    get_time = get_train_time(train, stop_id)
-    return jsonify({"incoming_time": get_time})
+    get_times = []
+    get_times = get_train_time(train, stop_id)
+    print(get_times)
+    return jsonify(get_times)
 
 #-----------------------------------------------for user feeds and comment components
 @app.route ('/add/comment', methods = ["POST"])
@@ -154,12 +144,14 @@ def view_comments(train):
     return jsonify(Comment.select_all_by_train(train))
 
 @app.route('/weatherkey')
-def get_weather_key():
-    weather_key = get_weatherkey()
+def get_openweather_key():
 
+    weather_key = get_weather_key()
     
-    print(weather_key)
+    time.sleep(5)
     return jsonify({"weather_key": weather_key})
+
+
 
 
 if __name__ == "__main__":
