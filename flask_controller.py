@@ -111,6 +111,8 @@ def get_train_stations(letter):
 def get_time(train, station):
 
     stop_id = get_stop_id(station)
+
+    
     get_times = []
     get_times = get_train_time(train, stop_id)
     print(get_times)
