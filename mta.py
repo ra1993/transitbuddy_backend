@@ -56,8 +56,6 @@ def get_realtime_data(key, train): #GETS DATA FROM API AND PARSES  ALL lines
     elif train == l:
        response = requests.get(f'http://datamine.mta.info/mta_esi.php?key={key}&feed_id=2')
 
-
-    # response = requests.get(f'http://datamine.mta.info/mta_esi.php?key={key}&feed_id=21')
     feed.ParseFromString(response.content)
 
     return  feed #type(trip_data)
