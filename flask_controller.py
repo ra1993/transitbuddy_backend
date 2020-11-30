@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
+from flask import Flask, request, redirect, session, jsonify, flash, url_for
 import requests
 from datetime import datetime
 import time
@@ -14,6 +14,7 @@ from util import encrypt_password
 from util import get_stop_id
 from util import get_weather_key
 from mta import get_train_time
+from util import all_stations
 
 
 
@@ -134,6 +135,12 @@ def add_comment():
     line_record = Line.select_one(line)
     user = User.select_token(token)
 
+    print(token)
+    print(user.username)
+    print(user.pk)
+
+    # time = datetime.strptime(d, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %I:%M:%S %p")
+
     new_comment = Comment(comment = comment, time = time, line_pk = line_record["pk"], user_pk = user.pk)
 
     new_comment.save()
@@ -153,7 +160,12 @@ def get_openweather_key():
     time.sleep(5)
     return jsonify({"weather_key": weather_key})
 
+# ---------------------------------------------------------station to list of trains
+@app.route('/stationlist')
+def get_station_list():
+    subway_stations = all_stations()
 
+    return subway_stations
 
 
 if __name__ == "__main__":

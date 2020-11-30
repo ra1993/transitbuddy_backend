@@ -5,7 +5,26 @@ import bcrypt
 import string
 import random
 
+#encoding libraries
+import chardet
+from collections import OrderedDict
+
+
 url = "http://web.mta.info/developers/data/nyct/subway/Stations.csv"
+
+
+#decode Data
+def find_encoding(content):
+    detected_encoding = chardet.detect(content)['encoding']
+
+    return detected_encoding
+
+def decode_data(content):
+    encoding = find_encoding(content)
+    decoded_data = content.decode(encoding = "cp1252")
+
+    return decoded_data
+
 
 #scrapes mta static csv 
 def scrape_data(url):
@@ -115,6 +134,26 @@ def get_weather_key():
         weatherkey = f_obj.readline().strip()
         print(weatherkey)
     return weatherkey
+
+# getting list of trains when user looks up the station-----------------------------------------
+
+def all_stations():
+    stopid_train, stopid_station = station_data(all_data)
+    id_station = [] 
+    
+    id_station = [f"{key} - {value}"for key, value in stopid_station.items()]
+
+    return id_station
+
+    
+def get_trains_for_station():
+    stopid_train, stopid_station = station_data(all_data)
+    id_trains = []
+
+    id_trains = [f"{key} - {value}" for key, value in stopid_train.items()]
+
+    return id_trains
+
 
 if __name__ == "__main__":
     app.run(debug=True)
