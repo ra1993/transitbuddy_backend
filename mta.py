@@ -22,8 +22,6 @@ load_dotenv(find_dotenv())
 with open("/home/richarda/apikeys/mtapikey","r") as file_object:
     api_key = file_object.readline().strip()
 
-
-
 def get_realtime_data(key, train): #GETS DATA FROM API AND PARSES  ALL lines
     feed = gtfs_realtime_pb2.FeedMessage()
 
